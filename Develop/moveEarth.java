@@ -34,7 +34,7 @@ public class moveEarth extends Applet implements Runnable{//implements Runnable
 	List<DTNHost> hosts;
 	
 	//NEW ADD
-	boolean flag;
+	boolean flag = true;
 	int satellite_numbers;
     double[][][] BL;
 	Point3f[][] points;

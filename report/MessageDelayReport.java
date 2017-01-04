@@ -17,8 +17,14 @@ import core.MessageListener;
  * Ignores the messages that were created during the warm up period.
  */
 public class MessageDelayReport extends Report implements MessageListener {
-	public static final String HEADER =
-	    "# messageDelay  cumulativeProbability";
+	public static final String HEADER = "title = MessageDelayReport"
+	+ "# 横纵坐标标题 中间用=分开"
+	+ "xlabel = MessageDelay"
+	+ "ylabel = CumulativeProbability"
+	+ "below is the data"
+	+ "# messageDelay  cumulativeProbability";
+//	public static final String HEADER =
+//	    "# messageDelay  cumulativeProbability";
 	/** all message delays */
 	private List<Double> delays;
 	private int nrofCreated;

@@ -77,9 +77,6 @@ public class OneSimUI extends DTNSimTextUI{
 				}
 			}
 			/**重置初始化配置，清楚之前的初始化实体，避免后续初始化无效**/
-			Settings s = new Settings();
-			System.out.println(s.getSetting("Group.nrofHosts"));
-			System.out.println(s.getSetting("Group.router"));
 			/**进行初始化**/
 			super.initModel();
 			setUI();		
@@ -204,7 +201,8 @@ public class OneSimUI extends DTNSimTextUI{
 		this.update(true); // force final UI update
 		
 		print("Simulation done in " + String.format("%.2f", duration) + "s");
-	
+		
+		main.setPaused(false);//一次仿真跑完之后让系统处于暂停状态，不会循环开始下一轮仿真
 	}
 	/**
 	 * Updates user interface if the long enough (real)time (update interval)

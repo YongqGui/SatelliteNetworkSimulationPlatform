@@ -498,13 +498,13 @@ public class Main_Window extends JFrame implements ActionListener, ChangeListene
 	 * @param paused If true, simulation is put to pause
 	 */
 	public void setPaused(boolean paused) {
-		if (!paused) {//ÔËÐÐ×´Ì¬
+		if (!paused) {//ÔÝÍ£×´Ì¬
 			this.playButton.setIcon(createImageIcon(ICON_PLAY));
 			this.simPaused = true;
 			Orbit_3D.setFlag(false);
 			Orbit_2D.setFlag(false);
 		}
-		else {//ÔÝÍ£×´Ì¬
+		else {//ÔËÐÐ×´Ì¬
 			this.playButton.setIcon(createImageIcon(ICON_PAUSE));
 			this.simPaused = false;
 			Orbit_3D.setFlag(true);
