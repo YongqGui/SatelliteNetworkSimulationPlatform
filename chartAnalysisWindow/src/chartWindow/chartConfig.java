@@ -20,6 +20,7 @@ public class chartConfig extends JFrame implements ActionListener,ChangeListener
     public JButton Confirm;
     public JButton Reset;
     public JButton Concel;
+    public JButton Adaption;
     private JTextField X_min;
     private JTextField X_max;
     private JTextField X_unit;
@@ -51,12 +52,16 @@ public Loadtxt load;
         this.Concel.addActionListener(this);
         this.Confirm = new JButton("应用");
         this.Confirm.addActionListener(this);
+        this.Adaption = new JButton("自适应坐标轴");
+        this.Adaption.addActionListener(this);
      //   ButtonMenu.add(Box.createHorizontalStrut(10));
      //   ButtonMenu.add(this.Reset);
         ButtonMenu.add(Box.createHorizontalStrut(10));
         ButtonMenu.add(this.Concel);
         ButtonMenu.add(Box.createHorizontalStrut(10));
         ButtonMenu.add(this.Confirm);
+        ButtonMenu.add(Box.createHorizontalStrut(10));
+        ButtonMenu.add(this.Adaption);
         tabs.setBounds(0, 0, 666, 380);
         ButtonMenu.setBounds(20, 405, 300, 30);
         this.add(tabs);
@@ -116,6 +121,14 @@ public Loadtxt load;
         LinkFirst.add(this.Y_min);
         LinkFirst.add(this.Y_max);
         LinkFirst.add(labelInterval2);
+
+        JLabel labelnote = new JLabel("注： 0 为自适应参数");
+        labelnote.setBounds(50, 245, 200, 30);
+        LinkFirst.add(labelnote);
+
+
+
+
     jp1.setLayout((LayoutManager)null);
         LinkFirst.setBounds(10, 0, 330, 350);
         jp1.add(LinkFirst);
@@ -171,6 +184,10 @@ if(confCherk()) {
 
         if(e.getSource() == this.Concel) {
             this.setVisible(false);
+        }
+        if(e.getSource() == this.Adaption) {
+            this.X_unit.setText("0");
+            this.Y_unit.setText("0");
         }
 
         e.getSource();
