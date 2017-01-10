@@ -26,7 +26,7 @@ Scenario.name = satellite network simulation
 Scenario.simulateConnections = true
 Scenario.updateInterval = 0.1
 # 43200s == 12h
-Scenario.endTime = 200
+Scenario.endTime = 43200
 
 
 ## Interface-specific settings:
