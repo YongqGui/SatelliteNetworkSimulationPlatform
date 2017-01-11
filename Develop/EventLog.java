@@ -67,7 +67,7 @@ public class EventLog extends JPanel
 	private int maxNrofEvents;
 	
 	private Font font;	// font used in log entries
-	private DTNSimTextUI gui;
+	private OneSimUI gui;
 	private Vector<JPanel> eventPanes;
 	private GridLayout layout;
 	
@@ -86,7 +86,7 @@ public class EventLog extends JPanel
 	 * Creates a new log panel
 	 * @param gui The where this log belongs to (for callbacks) 
 	 */
-	public EventLog(DTNSimTextUI gui) {
+	public EventLog(OneSimUI gui) {
 
 		this.gui = gui;
 		String title = PANEL_TITLE;
@@ -322,15 +322,15 @@ public class EventLog extends JPanel
 	public void actionPerformed(ActionEvent e) {
 		JButton source = (JButton)e.getSource();
 		
-//		if (source.getClientProperty(HOST_PROP) != null) {
-//			// button was a host button -> focus it on GUI
-//			gui.setFocus((DTNHost)source.getClientProperty(HOST_PROP));
-//		}
-//		else if (source.getClientProperty(MSG_PROP) != null) {
-//			// was a message button -> show information about the message
-//			Message m = (Message)source.getClientProperty(MSG_PROP);
-//			gui.getInfoPanel().showInfo(m);
-//		}
+		if (source.getClientProperty(HOST_PROP) != null) {
+			// button was a host button -> focus it on GUI
+			gui.setFocus((DTNHost)source.getClientProperty(HOST_PROP));
+		}
+		else if (source.getClientProperty(MSG_PROP) != null) {
+			// was a message button -> show information about the message
+			Message m = (Message)source.getClientProperty(MSG_PROP);
+			gui.getInfoPanel().showInfo(m);
+		}
 	}
 	
 	public String toString() {

@@ -144,7 +144,7 @@ public class InfoPanel extends JPanel implements ActionListener{
 			//this.gui.showPath(p);
 		}
 		else if (e.getSource() ==  this.routingInfoButton) {
-			//new RoutingInfoWindow(this.selectedHost);
+			new RoutingInfoWindow(this.selectedHost);
 		}
 	}
 	

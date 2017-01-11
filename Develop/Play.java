@@ -180,7 +180,7 @@ class PaintPanel extends JPanel implements Runnable{
 				g2d.drawLine(insert_points.get(k),insert_points.get(k+1),insert_points.get(k),insert_points.get(k+1));
 			}
 			
-			g2d.setColor(new Color(0,0,255));
+			g2d.setColor(new Color(255,50,50));
 			g2d.fillOval(((int)(((double)WIDTH/375.0)*BL[step][0]))-5,((int)(((double)HEIGHT/358.0)*BL[step][1]))-5,10,10);
 	}
 	

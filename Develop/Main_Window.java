@@ -47,7 +47,7 @@ public class Main_Window extends JFrame implements ActionListener, ChangeListene
 	private static final String ICON_Parameter = "Parameter.gif";	
 	private static final String ICON_Bigger = "Bigger.gif";
 	private static final String ICON_Smaller = "Smaller.gif";
-	
+	private static final String TEXT_SEPS = "simulated seconds per second";
 	/** Default width for the GUI window */
 	public static final int WIN_DEFAULT_WIDTH = 1280;
 	/** Default height for the GUI window */
@@ -85,15 +85,26 @@ public class Main_Window extends JFrame implements ActionListener, ChangeListene
     private List<DTNHost> hosts;
     private List<JButton> nodeButton;
     private InfoPanel infoPanel;
+    private JPanel desktop;
 
     /**3D、2D轨道界面**/
     private moveEarth Orbit_3D;
     private Play Orbit_2D;
     
+	/** simtime of last UI update */
+    private JLabel sepsField;	// simulated events per second field
+	private long lastUpdate;
+	private static final int EPS_AVG_TIME = 2000;
+	private double lastSimTime;
+    
 	public Main_Window(InfoPanel infoPanel){//EventLog elp, List<DTNHost> hosts) {
 		super("卫星仿真系统");
 		
 		this.infoPanel = infoPanel;
+		this.sepsField = new JLabel("0.00");
+		this.sepsField.setToolTipText(TEXT_SEPS);
+		JLabel time = new JLabel("仿真时间:");
+		JLabel s = new JLabel("s");
 		
 		final String liquid =  "javax.swing.plaf.nimbus.NimbusLookAndFeel";
 	  	try {
@@ -107,7 +118,7 @@ public class Main_Window extends JFrame implements ActionListener, ChangeListene
 	  	
 	  	
 		setSize(WIN_DEFAULT_WIDTH,WIN_DEFAULT_HEIGHT);
-	    JPanel desktop = new JPanel();
+	    desktop = new JPanel();
 	    getContentPane().add(desktop);
 	    
         chooser = new JFileChooser();
@@ -217,11 +228,25 @@ public class Main_Window extends JFrame implements ActionListener, ChangeListene
 //	    ButtonMenus.add(Bigger);
 	    ButtonMenus.add(parameter);
 	    ButtonMenus.add(report);
+	    ButtonMenus.add(Box.createHorizontalStrut(18));
+	    
+	    JSeparator sep = new JSeparator(SwingConstants.VERTICAL);	//添加分割线
+	    sep.setPreferredSize(new Dimension(20,20));
+	    sep.setMaximumSize(new Dimension(20,20));
+	    sep.setMinimumSize(new Dimension(20,20));
+	    ButtonMenus.add(sep);
+	    
+	    ButtonMenus.add(time);										//添加时间显示
+	    ButtonMenus.add(Box.createHorizontalStrut(3));
+	    ButtonMenus.add(sepsField);
+	    ButtonMenus.add(Box.createHorizontalStrut(3));
+	    ButtonMenus.add(s);
+
 	    fileMenus.add(ButtonMenus);
 	  
 	    //---------------------------设置节点列表----------------------------//	  	
 	    this.NodeList = new JPanel();
-	    this.NodeList.setBorder(new TitledBorder("Nodes"));
+	    this.NodeList.setBorder(new TitledBorder("节点列表"));
 
 	  
 
@@ -233,7 +258,7 @@ public class Main_Window extends JFrame implements ActionListener, ChangeListene
 	    JPanel Event = new JPanel();
         Event.setLayout(new BoxLayout(Event,BoxLayout.Y_AXIS));						//	沿着Y轴进行布局
 		//Event.setBorder();
-	    Event.setBorder(new TitledBorder("Event log"));
+	    Event.setBorder(new TitledBorder("事件窗口"));
 	    
 	    
 	    //	设置splitPane1的分隔线位置，0.1是相对于splitPane1的大小而定。
@@ -243,7 +268,7 @@ public class Main_Window extends JFrame implements ActionListener, ChangeListene
 	    JScrollPane Jscrollp = new JScrollPane(NodeList);		
 	    Jscrollp.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);	//	不用水平滚动轴
 	    JSP2 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,false,JSP1,Jscrollp);
-	  	JSP2.setResizeWeight(0.99);
+	  	JSP2.setResizeWeight(0.97);
 	  	JSP3 = new JSplitPane(JSplitPane.VERTICAL_SPLIT,false,fileMenus,JSP2);	
 	  	JSP3.setResizeWeight(0.01);
 
@@ -254,13 +279,12 @@ public class Main_Window extends JFrame implements ActionListener, ChangeListene
 	 * @param eventLog
 	 */
 	public void resetEventLog(EventLog eventLog){
-	    nodeStatus = new JPanel();
-	    //nodeStatus.setLayout(new BoxLayout(Event,BoxLayout.Y_AXIS));						//	沿着Y轴进行布局
-		//Event.setBorder();
-	    nodeStatus.setBorder(new TitledBorder("Node Status"));
-	    JSP0 = new JSplitPane(JSplitPane.VERTICAL_SPLIT,false,nodeStatus,new JScrollPane(eventLog));
-	    JSP0.setResizeWeight(0.1);
+		this.infoPanel.setBackground(JSP1.getBackground());	
+	    this.infoPanel.setBorder(new TitledBorder("信息面板"));
+	    JSP0 = new JSplitPane(JSplitPane.HORIZONTAL_SPLIT,false,new JScrollPane(eventLog),new JScrollPane(this.infoPanel));
+	    JSP0.setResizeWeight(0.6);
 		this.JSP1.setBottomComponent(JSP0);
+//		this.JSP1.setBottomComponent(new JScrollPane(eventLog));
 	}
 
 	/**
@@ -274,7 +298,7 @@ public class Main_Window extends JFrame implements ActionListener, ChangeListene
 		this.hosts = hosts;//同步后台生成的节点列表
 	    this.NodeList = new JPanel();
 	    this.NodeList.setLayout(new GridLayout(hosts.size(), 1));
-	    this.NodeList.setBorder(new TitledBorder("Nodes"));
+	    this.NodeList.setBorder(new TitledBorder("节点列表"));
 	    for (int i = 0; i < hosts.size(); i++){
 	    	JButton nodeButton = new JButton(hosts.get(i).toString());
 	    	this.nodeButton.add(nodeButton);//按钮与后台的节点列表顺序严格对应
@@ -293,8 +317,9 @@ public class Main_Window extends JFrame implements ActionListener, ChangeListene
 	public void newInfoPanel(DTNHost host){
 		this.infoPanel.setBackground(JSP1.getBackground());	
 		this.infoPanel.showInfo(host);
-	    this.infoPanel.setBorder(new TitledBorder("Info"));
-		JSP0.setTopComponent(this.infoPanel);
+	    this.infoPanel.setBorder(new TitledBorder("节点信息"));
+//		desktopPane.add(this.infoPanel);
+	    JSP0.setRightComponent(new JScrollPane(this.infoPanel));		// 在EventLog的右边显示
 	}
 	/**
 	 * 在后台初始化完成后调用，在UI中生成3D和2D的卫星轨道界面
@@ -373,6 +398,7 @@ public class Main_Window extends JFrame implements ActionListener, ChangeListene
 			this.simPaused = true;
 			this.simCancelled = true;
 			//System.exit(0);
+			this.setSimTime(0);			//重置仿真时间
 		}
 		else{
 			for (int i = 0; i < hosts.size(); i++){
@@ -512,6 +538,31 @@ public class Main_Window extends JFrame implements ActionListener, ChangeListene
 			this.simPaused = false;
 			Orbit_3D.setFlag(true);
 			Orbit_2D.setFlag(true);
+		}
+	}
+	
+	/**
+	 * 设置仿真时间
+	 * @param time The time to show
+	 */
+	public void setSimTime(double time) {
+		long timeSinceUpdate = System.currentTimeMillis() - this.lastUpdate;
+		
+		if (timeSinceUpdate > EPS_AVG_TIME) {
+			double val = ((time - this.lastSimTime) * 1000)/timeSinceUpdate;
+			String sepsValue = String.format("%.2f 1/s", val);
+
+			this.sepsField.setText(sepsValue);
+			this.lastSimTime = time;
+			this.lastUpdate = System.currentTimeMillis();
+		}
+		else {
+			this.sepsField.setText(String.format("%.1f", time));
+		}
+		
+		if(time == 0){
+			String sepsValue = String.format("%.2f 1/s", time);
+			this.sepsField.setText(sepsValue);
 		}
 	}
 }

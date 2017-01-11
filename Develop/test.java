@@ -1,73 +1,28 @@
 package Develop;
 
-import com.sun.j3d.utils.applet.MainFrame;
 import java.awt.*;
 import javax.swing.JFrame;
-import java.awt.Component;
-import java.awt.EventQueue;
-import java.awt.Graphics;
-import java.awt.event.*;
-import java.io.*;
-import javax.swing.*;
- 
- public class test {
-     /**
-      * @param args
-      */
-     public static void main(String[] args) {
-         // TODO Auto-generated method stub
-         EventQueue.invokeLater(new Runnable() {
-             
-             @Override
-             public void run() {
-                 // TODO Auto-generated method stub
-                 JFrame frame = new ImageViewerFrame();
-                 frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-                 frame.setVisible(true);
-             }
-        });
-     }
- }
- 
- class ImageViewerFrame extends JFrame{
-     public ImageViewerFrame(){
-         setTitle("ImageViewer");
-         setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
-         label = new JLabel();
-         add(label);
-         
-         chooser = new JFileChooser();
-         chooser.setCurrentDirectory(new File("."));
-         JMenuBar menubar = new JMenuBar();
-         setJMenuBar(menubar);
-         JMenu menu = new JMenu("File");
-         menubar.add(menu);
-         JMenuItem openItem = new JMenuItem("Open");
-         menu.add(openItem);
-         JMenuItem exitItem = new JMenuItem("Close");
-         menu.add(exitItem);
-         openItem.addActionListener(new ActionListener() {
-             @Override
-             public void actionPerformed(ActionEvent arg0) {
-                 // TODO Auto-generated method stub
-                 int result = chooser.showOpenDialog(null);
-                 if(result == JFileChooser.APPROVE_OPTION){
-                     String name = chooser.getSelectedFile().getPath();
-                     label.setIcon(new ImageIcon(name));
-                 }
+import javax.swing.JPanel;
+import javax.swing.WindowConstants;
+
+public class test extends JFrame{
+    /**
+     * @param args
+     */
+    public static void main(String[] args) {
+        test frame = new test("TEST");
+        frame.setVisible(true);
+    }
+    public test(String title){
+        this.setSize(new Dimension(200,300));
+        this.setTitle(title);
+        this.getContentPane().add(new JPanel(){
+            @Override
+            public void paintComponent(Graphics g){
+                // TODO Auto-generated method stub
+                g.drawLine(40,40,80,40);
             }
-         });
-         exitItem.addActionListener(new ActionListener() {
-             
-             @Override
-             public void actionPerformed(ActionEvent arg0) {
-                 // TODO Auto-generated method stub
-                 System.exit(0);
-             }
-         });
-     }
-     private JLabel label;
-     private JFileChooser chooser;
-     private static final int DEFAULT_WIDTH = 300;
-     private static final int DEFAULT_HEIGHT = 400;
+        });
+        this.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+    }
 }

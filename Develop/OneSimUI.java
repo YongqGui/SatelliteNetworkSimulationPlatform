@@ -76,11 +76,12 @@ public class OneSimUI extends DTNSimTextUI{
 					e.printStackTrace();
 				}
 			}
-			/**重置初始化配置，清楚之前的初始化实体，避免后续初始化无效**/
+			/**重置初始化配置，清除之前的初始化实体，避免后续初始化无效**/
 			/**进行初始化**/
 			super.initModel();
 			setUI();		
 			runSim();
+			main.setPaused(false);//一次仿真跑完之后让系统处于暂停状态，不会循环开始下一轮仿真
 			main.parameter.setEnabled(true);//重新允许编辑配置界面
 		}
 	}
@@ -91,7 +92,7 @@ public class OneSimUI extends DTNSimTextUI{
 		main.setNodeList(this.scen.getHosts());//刷新节点列表显示
 		resetEvenetLog();
 		reset3DWindow();
-		main.resetSimCancelled();//重置SimCancelled的值
+		main.resetSimCancelled();	//重置SimCancelled的值
 		main.parameter.setEnabled(false);
 	}
 	/**
@@ -99,7 +100,7 @@ public class OneSimUI extends DTNSimTextUI{
 	 */
 	private void resetEvenetLog(){
 		this.eventLog = new EventLog(this);//添加时间窗口
-	    eventLog.setBorder(new TitledBorder("Event log"));
+	    eventLog.setBorder(new TitledBorder("事件窗口"));
 	    main.resetEventLog(eventLog);
 		scen.addMessageListener(eventLog);
 		scen.addConnectionListener(eventLog);
@@ -184,6 +185,7 @@ public class OneSimUI extends DTNSimTextUI{
 			else{
 				try {
 					world.update();
+					this.updateTime();   					//用于更新仿真时间
 				} catch (AssertionError e) {
 					e.printStackTrace();
 					done();
@@ -201,8 +203,6 @@ public class OneSimUI extends DTNSimTextUI{
 		this.update(true); // force final UI update
 		
 		print("Simulation done in " + String.format("%.2f", duration) + "s");
-		
-		main.setPaused(false);//一次仿真跑完之后让系统处于暂停状态，不会循环开始下一轮仿真
 	}
 	/**
 	 * Updates user interface if the long enough (real)time (update interval)
@@ -238,4 +238,29 @@ public class OneSimUI extends DTNSimTextUI{
 		double endTime = s.getDouble(END_TIME_S);	//	结束时间
 		scen.setEndTime(endTime);
 	}
+	
+    /**
+     * Sets a node's graphical presentation in the center of the playfield view
+     * @param host The node to center
+     */
+    public void setFocus(DTNHost host) {
+    	//centerViewAt(host.getLocation());
+    	infoPanel.showInfo(host);
+    	//showPath(host.getPath()); // show path on the playfield
+    }
+    /**
+     * Returns the info panel of the GUI
+     * @return the info panel of the GUI
+     */
+    public InfoPanel getInfoPanel() {
+    	return this.infoPanel;
+    }
+    /**
+     * 更新仿真时间
+     */
+    private void updateTime() {
+    	double simTime = SimClock.getTime();
+    	this.lastUpdate = simTime;
+    	main.setSimTime(simTime); //update time to control panel
+    }
 }
