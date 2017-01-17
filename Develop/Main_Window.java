@@ -398,7 +398,8 @@ public class Main_Window extends JFrame implements ActionListener, ChangeListene
 			this.simPaused = true;
 			this.simCancelled = true;
 			//System.exit(0);
-			this.setSimTime(0);			//重置仿真时间
+			this.setSimTime(0);					// 重置仿真时间
+			this.infoPanel.removeAll();			// 节点信息面板置空
 		}
 		else{
 			for (int i = 0; i < hosts.size(); i++){
